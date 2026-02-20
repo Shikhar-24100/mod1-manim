@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Happy Rose Day, Harshita ♥</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            margin: 0; 
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+        }
+        
+        canvas { 
+            display: block;
+            touch-action: none;
+        }
+        
+        #topMessage {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        #bottomMessage {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+            max-width: 90%;
+        }
+        
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 300;
+            color: #d67585;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        
+        .quote {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-style: italic;
+            color: #d67585;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);
+            line-height: 1.6;
+        }
+        
+        #hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #be185d;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            opacity: 0.7;
+            text-align: center;
+            animation: fadeInOut 3s ease-in-out infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        
+        @media (max-width: 768px) {
+            #topMessage {
+                top: 15px;
+            }
+            
+            #bottomMessage {
+                bottom: 50px;
+            }
+            
+            #hint {
+                bottom: 15px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="topMessage">
+        <h1>Happy Rose Day, Harshita</h1>
+    </div>
+    
+    <div id="bottomMessage">
+        <p class="quote">You're the reason my heart blooms</p>
+    </div>
+    
+    <!-- <div id="hint">Drag to rotate • Pinch to zoom</div> -->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xfdf2f8);
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        let cameraDistance = 5;
+        camera.position.set(cameraDistance, -cameraDistance, cameraDistance);
+        camera.lookAt(0, 0, 0);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.7);
+        scene.add(ambientLight);
+        
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        mainLight.position.set(1, 2, 1);
+        scene.add(mainLight);
+        
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        fillLight.position.set(-1, -1, 1);
+        scene.add(fillLight);
+        
+        const sideLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        sideLight.position.set(2, 0, -1);
+        scene.add(sideLight);
+
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let previousTouchDistance = 0;
+
+        // Mouse events
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            if(!isDragging) return;
+            const deltaMove = {
+                x: e.clientX - previousMousePosition.x,
+                y: e.clientY - previousMousePosition.y
+            };
+            const rotationSpeed = 0.005;
+            scene.rotation.y += deltaMove.x * rotationSpeed;
+            scene.rotation.x += deltaMove.y * rotationSpeed;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        renderer.domElement.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch events for mobile
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                previousMousePosition = {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                previousTouchDistance = Math.sqrt(dx * dx + dy * dy);
+            }
+        });
+
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            
+            if (e.touches.length === 1 && isDragging) {
+                const deltaMove = {
+                    x: e.touches[0].clientX - previousMousePosition.x,
+                    y: e.touches[0].clientY - previousMousePosition.y
+                };
+                const rotationSpeed = 0.005;
+                scene.rotation.y += deltaMove.x * rotationSpeed;
+                scene.rotation.x += deltaMove.y * rotationSpeed;
+                previousMousePosition = {
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
+                };
+            } else if (e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (previousTouchDistance > 0) {
+                    const delta = distance - previousTouchDistance;
+                    cameraDistance = Math.max(3, Math.min(10, cameraDistance - delta * 0.01));
+                    camera.position.set(
+                        (camera.position.x / camera.position.length()) * cameraDistance,
+                        (camera.position.y / camera.position.length()) * cameraDistance,
+                        (camera.position.z / camera.position.length()) * cameraDistance
+                    );
+                    camera.lookAt(0, 0, 0);
+                }
+                previousTouchDistance = distance;
+            }
+        }, { passive: false });
+
+        renderer.domElement.addEventListener('touchend', () => {
+            isDragging = false;
+            previousTouchDistance = 0;
+        });
+
+        function meshgrid(x, y) {
+            const X = [];
+            const Y = [];
+            for(let i = 0; i < y.length; i++) {
+                const row_x = [];
+                const row_y = [];
+                for(let j = 0; j < x.length; j++) {
+                    row_x.push(x[j]);
+                    row_y.push(y[i]);
+                }
+                X.push(row_x);
+                Y.push(row_y);
+            }
+            return [X, Y];
+        }
+
+        function createStem(startPoint) {
+            const curve = new THREE.CubicBezierCurve3(
+                new THREE.Vector3(startPoint.x, startPoint.y, 0.5), 
+                new THREE.Vector3(startPoint.x * 0.6, startPoint.y * 0.6, -0.8), 
+                new THREE.Vector3(startPoint.x * 0.3, startPoint.y * 0.3, -1.5), 
+                new THREE.Vector3(0, 0, -2) 
+            );
+
+            const points = curve.getPoints(50);
+            const geometry = new THREE.TubeGeometry(
+                new THREE.CatmullRomCurve3(points),
+                50, 
+                0.02, 
+                8, 
+                false 
+            );
+
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x587E7E, 
+                shininess: 30
+            });
+
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function createLeaf(position, rotation, scale = 1) {
+            const leafShape = new THREE.Shape();
+            
+            // Create a more organic leaf shape
+            leafShape.moveTo(0, 0);
+            leafShape.quadraticCurveTo(0.05 * scale, 0.08 * scale, 0.08 * scale, 0.15 * scale);
+            leafShape.quadraticCurveTo(0.09 * scale, 0.2 * scale, 0.07 * scale, 0.25 * scale);
+            leafShape.quadraticCurveTo(0.05 * scale, 0.28 * scale, 0, 0.3 * scale);
+            leafShape.quadraticCurveTo(-0.05 * scale, 0.28 * scale, -0.07 * scale, 0.25 * scale);
+            leafShape.quadraticCurveTo(-0.09 * scale, 0.2 * scale, -0.08 * scale, 0.15 * scale);
+            leafShape.quadraticCurveTo(-0.05 * scale, 0.08 * scale, 0, 0);
+
+            const extrudeSettings = {
+                depth: 0.01 * scale,
+                bevelEnabled: true,
+                bevelThickness: 0.005 * scale,
+                bevelSize: 0.005 * scale,
+                bevelSegments: 3
+            };
+
+            const geometry = new THREE.ExtrudeGeometry(leafShape, extrudeSettings);
+            
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x2d5016,
+                side: THREE.DoubleSide,
+                shininess: 40
+            });
+
+            const leaf = new THREE.Mesh(geometry, material);
+            leaf.position.set(position.x, position.y, position.z);
+            leaf.rotation.set(rotation.x, rotation.y, rotation.z);
+            
+            return leaf;
+        }
+
+        function createRoseSurface() {
+            const x = Array.from({length: 25}, (_, i) => i / 24);
+            const t = Array.from({length: 1151}, (_, i) => (i * 0.5 / 575) * 20 * Math.PI + 4 * Math.PI);
+            
+            const [xr, tr] = meshgrid(x, t);
+            const rows = tr.length;
+            const cols = tr[0].length;
+
+            const pr = tr.map(row => row.map(t => (Math.PI/2) * Math.exp(-t/(8*Math.PI))));
+            const cr = tr.map(row => row.map(t => Math.sin(15*t)/150));
+            
+            const ur = tr.map((row, i) => row.map((t, j) => {
+                const mod_term = (3.6 * t) % (2 * Math.PI);
+                return 1 - Math.pow(1 - mod_term/Math.PI, 4)/2 + cr[i][j];
+            }));
+
+            const yr = xr.map((row, i) => row.map((x, j) => 
+                2 * Math.pow(x*x - x, 2) * Math.sin(pr[i][j])
+            ));
+
+            const rr = xr.map((row, i) => row.map((x, j) => 
+                ur[i][j] * (x * Math.sin(pr[i][j]) + yr[i][j] * Math.cos(pr[i][j]))
+            ));
+
+            const hr = xr.map((row, i) => row.map((x, j) => 
+                ur[i][j] * (x * Math.cos(pr[i][j]) - yr[i][j] * Math.sin(pr[i][j]))
+            ));
+
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const colors = [];
+            let indices = [];
+            let index = 0;
+
+            const colorList = [
+                [0.95, 0.30, 0.50],
+                [0.97, 0.45, 0.58],
+                [0.98, 0.60, 0.68],
+                [0.99, 0.70, 0.75],
+                [0.99, 0.80, 0.83],
+                [0.99, 0.90, 0.92]
+            ];
+
+            let minH = Math.min(...hr.map(row => Math.min(...row)));
+            let maxH = Math.max(...hr.map(row => Math.max(...row)));
+
+            for(let i = 0; i < rows - 1; i++) {
+                for(let j = 0; j < cols - 1; j++) {
+                    const x1 = rr[i][j] * Math.cos(tr[i][j]);
+                    const y1 = rr[i][j] * Math.sin(tr[i][j]);
+                    const z1 = hr[i][j] + 0.35;
+
+                    const x2 = rr[i+1][j] * Math.cos(tr[i+1][j]);
+                    const y2 = rr[i+1][j] * Math.sin(tr[i+1][j]);
+                    const z2 = hr[i+1][j] + 0.35;
+
+                    const x3 = rr[i][j+1] * Math.cos(tr[i][j+1]);
+                    const y3 = rr[i][j+1] * Math.sin(tr[i][j+1]);
+                    const z3 = hr[i][j+1] + 0.35;
+
+                    vertices.push(x1, y1, z1, x2, y2, z2, x3, y3, z3);
+                    indices.push(index, index + 1, index + 2);
+                    index += 3;
+
+                    [hr[i][j], hr[i+1][j], hr[i][j+1]].forEach(h => {
+                        const t = (h - minH) / (maxH - minH);
+                        const colorIndex = Math.min(Math.floor(t * (colorList.length - 1)), colorList.length - 2);
+                        const colorT = (t * (colorList.length - 1)) - colorIndex;
+                        
+                        const color1 = colorList[colorIndex];
+                        const color2 = colorList[colorIndex + 1];
+                        
+                        colors.push(
+                            color1[0] * (1 - colorT) + color2[0] * colorT,
+                            color1[1] * (1 - colorT) + color2[1] * colorT,
+                            color1[2] * (1 - colorT) + color2[2] * colorT
+                        );
+                    });
+
+                    const x4 = rr[i+1][j+1] * Math.cos(tr[i+1][j+1]);
+                    const y4 = rr[i+1][j+1] * Math.sin(tr[i+1][j+1]);
+                    const z4 = hr[i+1][j+1] + 0.35;
+
+                    vertices.push(x2, y2, z2, x4, y4, z4, x3, y3, z3);
+                    indices.push(index, index + 1, index + 2);
+                    index += 3;
+
+                    [hr[i+1][j], hr[i+1][j+1], hr[i][j+1]].forEach(h => {
+                        const t = (h - minH) / (maxH - minH);
+                        const colorIndex = Math.min(Math.floor(t * (colorList.length - 1)), colorList.length - 2);
+                        const colorT = (t * (colorList.length - 1)) - colorIndex;
+                        
+                        const color1 = colorList[colorIndex];
+                        const color2 = colorList[colorIndex + 1];
+                        
+                        colors.push(
+                            color1[0] * (1 - colorT) + color2[0] * colorT,
+                            color1[1] * (1 - colorT) + color2[1] * colorT,
+                            color1[2] * (1 - colorT) + color2[2] * colorT
+                        );
+                    });
+                }
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            geometry.setIndex(indices);
+            geometry.computeVertexNormals();
+
+            const material = new THREE.MeshPhongMaterial({
+                vertexColors: true,
+                side: THREE.DoubleSide,
+                shininess: 50,
+                transparent: true,
+                opacity: 0.92
+            });
+
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function createBouquet() {
+            const bouquetGroup = new THREE.Group();
+
+            const positions = [
+                { x: 0, y: 0, z: 0, scale: 1.0 },
+                { x: 0.8, y: 0, z: 0, scale: 0.95 },
+                { x: -0.8, y: 0, z: 0, scale: 0.95 },
+                { x: 0.4, y: 0.7, z: 0, scale: 0.95 },
+                { x: -0.3, y: 0.8, z: 0, scale: 0.95 },
+                { x: 0.4, y: -0.7, z: 0, scale: 0.95 },
+                { x: -0.4, y: -0.7, z: 0, scale: 0.95 }
+            ];
+
+            positions.forEach((pos, index) => {
+                const rose = createRoseSurface();
+                rose.position.set(pos.x, pos.y, pos.z);
+                rose.scale.set(pos.scale, pos.scale, pos.scale);
+
+                if (pos.x !== 0 || pos.y !== 0) {
+                    const tiltAmount = 0.3;
+                    rose.rotation.x = -pos.y * tiltAmount / Math.sqrt(pos.x * pos.x + pos.y * pos.y);
+                    rose.rotation.y = pos.x * tiltAmount / Math.sqrt(pos.x * pos.x + pos.y * pos.y);
+                }
+
+                const stem = createStem(pos);
+                
+                // Add 2-3 leaves per rose with better orientation
+                const baseAngle = (index * Math.PI / 3);
+                
+                const leaf1 = createLeaf(
+                    { 
+                        x: pos.x * 0.65, 
+                        y: pos.y * 0.65, 
+                        z: -0.4 
+                    },
+                    { x: -Math.PI / 6, y: baseAngle, z: Math.PI / 12 },
+                    0.7
+                );
+                
+                const leaf2 = createLeaf(
+                    { 
+                        x: pos.x * 0.45, 
+                        y: pos.y * 0.45, 
+                        z: -0.9 
+                    },
+                    { x: -Math.PI / 8, y: baseAngle + 2, z: -Math.PI / 10 },
+                    0.75
+                );
+                
+                bouquetGroup.add(rose);
+                bouquetGroup.add(stem);
+                bouquetGroup.add(leaf1);
+                bouquetGroup.add(leaf2);
+            });
+
+            return bouquetGroup;
+        }
+
+        const bouquet = createBouquet();
+        scene.add(bouquet);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (!isDragging) {
+                bouquet.rotation.y += 0.002;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
