@@ -9,31 +9,38 @@ from manim import *
 
 UTILS = "utils/"
 
+# ── Palette (3B1B-inspired) ────────────────────────────────────────────────
+CREAM       = "#FFFBE6"
+DARK_BG     = "#1C1C2E"
+ACCENT_BLUE = "#58C4DD"
+ACCENT_RED  = "#FF6B6B"
+ACCENT_GRN  = "#6BCB77"
+DIM_GREY    = "#888899"
+SOFT_WHITE  = "#E8E8F0"
+ALT_YELLOW  = "#F2D388"
+
+
 class Scene2NetworkComponents(Scene):
     def construct(self):
+        self.camera.background_color = DARK_BG
 
         # ── Title ──────────────────────────────────────────────────────
-        title = Text("Network Components", font_size=34, weight=BOLD, color=WHITE)
-        title.to_edge(UP, buff=0.4)
-        self.play(FadeIn(title, shift=DOWN * 0.2))
+        title = Text("Network Components", font_size=38, weight=BOLD, color=SOFT_WHITE)
+        subtitle = Text("The key players in a 1G AMPS network", font_size=21, color=ACCENT_BLUE)
+        title_group = VGroup(title, subtitle).arrange(DOWN, buff=0.25).to_edge(UP, buff=0.45)
+        
+        self.play(FadeIn(title_group, shift=DOWN * 0.25))
         self.wait(0.3)
-
-        # ── Subtitle ───────────────────────────────────────────────────
-        subtitle = Text("The key players in a 1G AMPS network", font_size=19, color=BLUE_B, slant=ITALIC)
-        subtitle.next_to(title, DOWN, buff=0.18)
-        self.play(FadeIn(subtitle))
-        self.wait(0.4)
 
         # ══════════════════════════════════════════════════════════════
         # PART 1 — Introduce each component one by one with description
         # ══════════════════════════════════════════════════════════════
 
         # ── Helper: icon loader with fallback shape ────────────────────
-        def load_icon(svg_name, fallback_shape, scale=0.55, colorize=True):
+        def load_icon(svg_name, fallback_shape, scale=0.55):
             try:
                 icon = SVGMobject(UTILS + svg_name).scale(scale)
-                if not colorize:
-                    return icon
+                # Ensure SVGs are NOT colorized to preserve their original design
             except Exception:
                 icon = fallback_shape
             return icon
@@ -43,63 +50,57 @@ class Scene2NetworkComponents(Scene):
             (
                 "mobile.svg",
                 RoundedRectangle(corner_radius=0.12, width=0.5, height=0.85,
-                                 color=YELLOW, fill_opacity=0.3),
-                YELLOW,
+                                 color=ALT_YELLOW, fill_opacity=0.3),
+                ALT_YELLOW,
                 "Mobile Unit",
-                "Each mobile has a unique\nidentification number.",
-                False   # don't colorize SVG
+                "Each mobile has a unique\nidentification number."
             ),
             (
                 "bs_tower.svg",
-                Triangle(color=GREEN_C, fill_opacity=0.3).scale(0.55),
-                GREEN_C,
+                Triangle(color=ACCENT_GRN, fill_opacity=0.3).scale(0.55),
+                ACCENT_GRN,
                 "Base Station (BS)",
-                "Continuously broadcasts\ncontrol signals (FOCC).",
-                False   # don't colorize SVG
+                "Continuously broadcasts\ncontrol signals (FOCC)."
             ),
             (
                 "hlr_box.svg",
                 RoundedRectangle(corner_radius=0.1, width=0.7, height=0.6,
-                                 color=BLUE_C, fill_opacity=0.3),
-                BLUE_C,
+                                 color=ACCENT_BLUE, fill_opacity=0.3),
+                ACCENT_BLUE,
                 "HLR",
-                "Holds data of all users\nwhose HOME cell is here.",
-                True
+                "Holds data of all users\nwhose HOME cell is here."
             ),
             (
                 "vlr_box.svg",
                 RoundedRectangle(corner_radius=0.1, width=0.7, height=0.6,
-                                 color=RED_C, fill_opacity=0.3),
-                RED_C,
+                                 color=ACCENT_RED, fill_opacity=0.3),
+                ACCENT_RED,
                 "VLR",
-                "Holds data of VISITING\nusers from other cells.",
-                True
+                "Holds data of VISITING\nusers from other cells."
             ),
         ]
 
         card_group = VGroup()
-        for i, (svg, fallback, col, name, desc, colorize) in enumerate(components):
-            icon = load_icon(svg, fallback, scale=0.55, colorize=colorize)
-            if colorize:
-                icon.set_color(col)
+        for i, (svg, fallback, col, name, desc) in enumerate(components):
+            icon = load_icon(svg, fallback, scale=0.55)
 
             name_lbl = Text(name, font_size=17, color=col, weight=BOLD)
-            desc_lbl  = Text(desc, font_size=13, color=GREY_A)
-            desc_lbl.scale(1)
+            desc_lbl = Text(desc, font_size=14, color=SOFT_WHITE)
 
             card_content = VGroup(icon, name_lbl, desc_lbl).arrange(DOWN, buff=0.18)
 
             box = SurroundingRectangle(
                 card_content, corner_radius=0.15,
-                color=col, fill_color=BLACK,
-                fill_opacity=0.5, buff=0.22,
+                color=DIM_GREY, fill_color='#151522',
+                fill_opacity=0.7, buff=0.22,
                 stroke_width=1.5
             )
             card = VGroup(box, card_content)
             card_group.add(card)
 
         card_group.arrange(RIGHT, buff=0.35)
-        card_group.next_to(subtitle, DOWN, buff=0.45)
+        # Position cards comfortably below the header
+        card_group.next_to(title_group, DOWN, buff=0.6)
         card_group.scale_to_fit_width(13)
 
         # Animate cards one by one
@@ -113,11 +114,16 @@ class Scene2NetworkComponents(Scene):
         # PART 2 — Multi-cell map: 3 hexagonal cells, each with HLR+VLR+BS+Mobile
         # ══════════════════════════════════════════════════════════════
 
-        self.play(FadeOut(card_group, subtitle), run_time=0.6)
+        self.play(FadeOut(card_group), run_time=0.6)
 
-        map_title = Text("The Network — 3 Cells", font_size=24, color=YELLOW, weight=BOLD)
-        map_title.next_to(title, DOWN, buff=0.25)
-        self.play(FadeIn(map_title))
+        map_title = Text("The Network — 3 Cells", font_size=20, color=CREAM, slant=ITALIC)
+        # Replacing the subtitle with this new map_title in same position roughly
+        map_title.next_to(title_group[0], DOWN, buff=0.25)
+        
+        self.play(
+            FadeOut(title_group[1], shift=UP*0.2), # Fade out original subtitle
+            FadeIn(map_title, shift=UP*0.2)
+        )
         self.wait(0.3)
 
         # ── Hexagonal cell factory ─────────────────────────────────────
@@ -127,8 +133,9 @@ class Scene2NetworkComponents(Scene):
                 color=col, fill_opacity=0.10, stroke_width=2
             ).scale(1.55).move_to(center)
 
-        cell_colors  = [BLUE_C, GREEN_C, RED_C]
-        cell_centers = [LEFT * 3.8, ORIGIN, RIGHT * 3.8]
+        cell_colors  = [ACCENT_BLUE, ACCENT_GRN, ACCENT_RED]
+        # Shifted slightly UP to ensure no overlap with bottom fact text
+        cell_centers = [LEFT * 3.8 + UP * 0.2, UP * 0.2, RIGHT * 3.8 + UP * 0.2]
         cell_numbers = ["1", "2", "3"]
 
         hexes = [make_hex(c, col) for c, col in zip(cell_centers, cell_colors)]
@@ -149,11 +156,11 @@ class Scene2NetworkComponents(Scene):
         def make_bs(center, col):
             try:
                 icon = SVGMobject(UTILS + "bs_tower.svg").scale(0.38)
-                # natural SVG colors preserved — no set_color
+                # No set_color applied to preserve SVG's inherent colors
             except Exception:
                 icon = Triangle(color=col, fill_opacity=0.5).scale(0.32)
             icon.move_to(center + UP * 0.15)
-            lbl = Text("BS", font_size=11, color=col).next_to(icon, DOWN, buff=0.05)
+            lbl = Text("BS", font_size=12, color=col, weight=BOLD).next_to(icon, DOWN, buff=0.1)
             return VGroup(icon, lbl)
 
         bs_icons = [make_bs(ctr, col) for ctr, col in zip(cell_centers, cell_colors)]
@@ -162,21 +169,21 @@ class Scene2NetworkComponents(Scene):
 
         # ── HLR + VLR boxes (top-left corner of each hex) ─────────────
         def make_hlr_vlr(center, col):
-            def db_icon(svg_name, label_str, icon_col):
+            def db_icon(svg_name, label_str, fallback_col):
                 try:
                     ico = SVGMobject(UTILS + svg_name).scale(0.28)
-                    ico.set_color(icon_col)
+                    # No set_color applied to preserve SVG's inherent colors
                 except Exception:
                     ico = RoundedRectangle(
                         corner_radius=0.08, width=0.42, height=0.36,
-                        color=icon_col, fill_opacity=0.35
+                        color=fallback_col, fill_opacity=0.35
                     )
-                lbl = Text(label_str, font_size=11, color=icon_col, weight=BOLD)
-                lbl.next_to(ico, DOWN, buff=0.04)
+                lbl = Text(label_str, font_size=11, color=SOFT_WHITE, weight=BOLD)
+                lbl.next_to(ico, DOWN, buff=0.06)
                 return VGroup(ico, lbl)
 
-            hlr = db_icon("hlr_box.svg", "HLR", col)
-            vlr = db_icon("vlr_box.svg", "VLR", col)
+            hlr = db_icon("hlr_box.svg", "HLR", ACCENT_BLUE)
+            vlr = db_icon("vlr_box.svg", "VLR", ACCENT_RED)
             pair = VGroup(hlr, vlr).arrange(RIGHT, buff=0.18)
             pair.move_to(center + UP * 1.05 + LEFT * 0.5)
             return pair
@@ -189,14 +196,14 @@ class Scene2NetworkComponents(Scene):
         def make_mobile(center, col):
             try:
                 ico = SVGMobject(UTILS + "mobile.svg").scale(0.32)
-                # natural SVG colors preserved — no set_color
+                # No set_color applied to preserve SVG's inherent colors
             except Exception:
                 ico = RoundedRectangle(
                     corner_radius=0.08, width=0.28, height=0.45,
-                    color=col, fill_opacity=0.45
+                    color=ALT_YELLOW, fill_opacity=0.45
                 )
             ico.move_to(center + RIGHT * 0.9 + DOWN * 0.6)
-            id_lbl = Text("ID", font_size=10, color=col).next_to(ico, DOWN, buff=0.04)
+            id_lbl = Text("ID", font_size=11, color=SOFT_WHITE).next_to(ico, DOWN, buff=0.06)
             return VGroup(ico, id_lbl)
 
         mobiles = [make_mobile(ctr, col) for ctr, col in zip(cell_centers, cell_colors)]
@@ -228,19 +235,26 @@ class Scene2NetworkComponents(Scene):
 
         # ── Key fact callout ──────────────────────────────────────────
         fact = Text(
-            "Each BS continuously broadcasts its signal.\n"
-            "Mobiles identify the BS with maximum strength.",
-            font_size=17, color=YELLOW, line_spacing=1.3
-        ).to_edge(DOWN, buff=0.35)
+            "Each BS continuously broadcasts its signal.\nMobiles identify the BS with maximum strength.",
+            font_size=19, color=CREAM, line_spacing=1.1
+        ).to_edge(DOWN, buff=0.5)
+        
+        underline = Line(
+            fact.get_left() + DOWN * 0.08,
+            fact.get_right() + DOWN * 0.08,
+            color=ACCENT_BLUE, stroke_width=1.5
+        )
+
         self.play(FadeIn(fact, shift=UP * 0.2))
+        self.play(Create(underline, run_time=0.5))
         self.wait(2.2)
 
         # ── Fade everything out ───────────────────────────────────────
         all_objects = VGroup(
-            title, map_title,
+            title_group[0], map_title,
             *hexes, *cell_num_labels,
             *bs_icons, *hlr_vlr_groups, *mobiles,
-            *all_ripples, fact
+            *all_ripples, fact, underline
         )
         self.play(FadeOut(all_objects, shift=UP * 0.3), run_time=0.8)
         self.wait(0.3)

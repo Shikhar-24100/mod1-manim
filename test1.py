@@ -26,16 +26,16 @@ class Scene1Recap(Scene):
         CELL_LBL     = ["A", "B", "C"]
 
         # ── Title ──────────────────────────────────────────────────────
-        title = Text("Module 2 — 1G AMPS", font_size=38, weight=BOLD, color=SOFT_WHITE)
+        title = Text("Introduction to 1G AMPS", font_size=38, weight=BOLD, color=SOFT_WHITE)
         subtitle = Text("Call Flow in 1G Cellular", font_size=22, color=ACCENT_BLUE)
         title_group = VGroup(title, subtitle).arrange(DOWN, buff=0.25).to_edge(UP, buff=0.45)
         self.play(FadeIn(title_group, shift=DOWN*0.25))
         self.wait(0.4)
 
         # ── Recap label ─────────────────────────────────────────────────
-        recap = Text("Quick Recap from Module 1", font_size=20, color=CREAM, slant=ITALIC)
-        recap.next_to(title_group, DOWN, buff=0.35)
-        self.play(FadeIn(recap))
+        # recap = Text("Quick Recap from Module 1", font_size=20, color=CREAM, slant=ITALIC)
+        # recap.next_to(title_group, DOWN, buff=0.35)
+        # self.play(FadeIn(recap))
         self.wait(0.5)
 
         # ── Frequency Axis ──────────────────────────────────────────────
@@ -113,7 +113,7 @@ class Scene1Recap(Scene):
 
         # ── Fade out all ────────────────────────────────────────────────
         everything = VGroup(
-            title_group, recap, axis, label_mhz, label_825, label_849,
+            title_group, axis, label_mhz, label_825, label_849,
             pools, pool_texts, *cells, *arrows, closing
         )
         self.play(FadeOut(everything, shift=UP*0.3))
