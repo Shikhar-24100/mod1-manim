@@ -31,7 +31,7 @@ class Scene3ControlChannels(Scene):
             font_size=19, color=ACCENT_BLUE
         ).next_to(title, DOWN, buff=0.25)
         self.play(FadeIn(subtitle))
-        self.wait(0.5)
+        self.wait(2.5)
 
         # ══════════════════════════════════════════════════════════════
         # ICONS — BS left, Mobile right, fixed positions
@@ -60,7 +60,7 @@ class Scene3ControlChannels(Scene):
             FadeIn(bs_icon, shift=RIGHT * 0.2), FadeIn(bs_label),
             FadeIn(mob_icon, shift=LEFT * 0.2), FadeIn(mob_label),
         )
-        self.wait(0.4)
+        self.wait(2.4)
 
         # ══════════════════════════════════════════════════════════════
         # FOCC — upper half
@@ -83,7 +83,7 @@ class Scene3ControlChannels(Scene):
 
         self.play(GrowArrow(focc_arrow))
         self.play(FadeIn(focc_tag), FadeIn(focc_name), FadeIn(focc_dir))
-        self.wait(0.3)
+        self.wait(2.3)
 
         focc_uses = [
             "●  Broadcasting BS signals",
@@ -99,7 +99,7 @@ class Scene3ControlChannels(Scene):
 
         for line in focc_bullets:
             self.play(FadeIn(line, shift=RIGHT * 0.15), run_time=0.4)
-        self.wait(0.6)
+        self.wait(2.6)
 
         # ══════════════════════════════════════════════════════════════
         # Transition: fade FOCC bullets out, slide FOCC block up
@@ -113,7 +113,7 @@ class Scene3ControlChannels(Scene):
             focc_block.animate.shift(UP * 0.6), # Move FOCC up significantly
             run_time=0.6
         )
-        self.wait(0.2)
+        self.wait(2.2)
 
         # ══════════════════════════════════════════════════════════════
         # RECC — lower half, anchored well below FOCC block
@@ -136,7 +136,7 @@ class Scene3ControlChannels(Scene):
 
         self.play(GrowArrow(recc_arrow))
         self.play(FadeIn(recc_tag), FadeIn(recc_name), FadeIn(recc_dir))
-        self.wait(0.3)
+        self.wait(2.3)
 
         recc_uses = [
             "●  Sharing Mobile ID on wake-up",
@@ -152,7 +152,7 @@ class Scene3ControlChannels(Scene):
 
         for line in recc_bullets:
             self.play(FadeIn(line, shift=LEFT * 0.15), run_time=0.4)
-        self.wait(0.6)
+        self.wait(2.6)
 
         # ══════════════════════════════════════════════════════════════
         # COLLISION NOTE — after clearing bullets
@@ -161,7 +161,7 @@ class Scene3ControlChannels(Scene):
         self.play(FadeOut(recc_bullets), run_time=0.4)
 
         collision_note = Text(
-            "⚠   RECC uses a Collision / Contention mechanism",
+            "RECC uses a Collision / Contention mechanism",
             font_size=18, color=ALT_YELLOW, weight=BOLD
         ).to_edge(DOWN, buff=0.4)
         
@@ -172,7 +172,7 @@ class Scene3ControlChannels(Scene):
         coll_group = VGroup(box, collision_note)
 
         self.play(FadeIn(coll_group, shift=UP * 0.2))
-        self.wait(2.2)
+        self.wait(4.2)
 
         # ── Fade everything out ───────────────────────────────────────
         all_obj = VGroup(
@@ -183,4 +183,4 @@ class Scene3ControlChannels(Scene):
             coll_group
         )
         self.play(FadeOut(all_obj, shift=UP * 0.3), run_time=0.8)
-        self.wait(0.3)
+        self.wait(1.3)

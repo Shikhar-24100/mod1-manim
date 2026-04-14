@@ -47,7 +47,7 @@ class Scene1Recap(Scene):
 
         label_mhz = Text("MHz", font_size=18, color=DIM_GREY).next_to(axis, RIGHT, buff=0.1)
         label_825 = Text("825", font_size=16, color=DIM_GREY).next_to(axis.get_left(), DOWN, buff=0.15)
-        label_849 = Text("849", font_size=16, color=DIM_GREY).next_to(axis.get_right() + LEFT*0.3, DOWN, buff=0.15)
+        label_849 = Text("849", font_size=16, color=DIM_GREY).next_to(axis.get_right() + LEFT*0.1, DOWN, buff=0.15)
 
         self.play(GrowArrow(axis), FadeIn(label_mhz, label_825, label_849))
         self.wait(0.3)

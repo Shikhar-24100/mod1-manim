@@ -293,7 +293,7 @@ class Scene6Scenario3(Scene):
         self.play(FadeOut(contrast), FadeIn(st6))
 
         clock_c = Circle(radius=0.28, color=SOFT_WHITE, stroke_width=2.5)
-        clock_c.next_to(mob, UP*0.15, buff=0.18)
+        clock_c.next_to(mob, UP*0.2, buff=0.18)
         m_hand = Line(clock_c.get_center(),
                       clock_c.get_center() + UP * 0.2,
                       color=SOFT_WHITE, stroke_width=2.5)
@@ -301,7 +301,7 @@ class Scene6Scenario3(Scene):
                       clock_c.get_center() + RIGHT * 0.15,
                       color=SOFT_WHITE, stroke_width=2.5)
         clock = VGroup(clock_c, m_hand, h_hand)
-        timer_lbl = Text("15 min", font_size=12, color=CREAM).next_to(clock_c, RIGHT, buff=0.1)
+        timer_lbl = Text("15 min", font_size=12, color=CREAM).next_to(clock_c, UP, buff=0.1)
 
         self.play(FadeIn(clock, scale=0.7), FadeIn(timer_lbl))
         self.play(Rotate(m_hand, angle=-TAU, about_point=clock_c.get_center()), run_time=1.1)

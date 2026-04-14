@@ -246,9 +246,9 @@ class Scene4Scenario1(Scene):
         )
 
         timer_lbl = Text("15 min", font_size=13, color=CREAM)
-        # Fixed timer label position so it doesn't overlap clock or mobile
-        timer_lbl.next_to(clock_circle, RIGHT, buff=0.15)
-        self.play(FadeIn(timer_lbl, shift=LEFT * 0.1))
+        # Position timer label above the clock as requested
+        timer_lbl.next_to(clock_circle, UP, buff=0.15)
+        self.play(FadeIn(timer_lbl, shift=DOWN * 0.1))
         self.wait(1.5)
 
         # ══════════════════════════════════════════════════════════════
